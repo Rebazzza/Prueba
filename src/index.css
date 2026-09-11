@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #080607;
+  color: #e7e5e4;
+  overflow-x: hidden;
+}
+
+/* Grain overlay (veladura editorial dorada) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-image:
+    radial-gradient(rgba(246, 228, 168, 0.02) 1px, transparent 0);
+  background-size: 24px 24px;
+  opacity: 0.6;
+}
+
+/* Selection color */
+::selection {
+  background-color: #4a0e17;
+  color: #f6e4a8;
+}
+
+@theme {
+  --font-sans: 'Montserrat', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+  --font-cinzel: 'Cinzel', Georgia, serif;
+  --font-handwriting: 'Great Vibes', cursive;
+
+  --color-noir: #080607;
+  --color-wine-950: #1f050a;
+  --color-wine-900: #320a11;
+  --color-wine-800: #4a0e17;
+  --color-wine-700: #641320;
+  --color-wine-600: #851c2d;
+  --color-ivory-50: #fdfcf7;
+  --color-ivory-100: #f9f6ed;
+  --color-ivory-200: #efe9dc;
+  --color-ivory-300: #ded5c1;
+  --color-ivory-400: #c5b89c;
+  --color-gold-100: #fbf4d8;
+  --color-gold-200: #f6e4a8;
+  --color-gold-300: #ebd17b;
+  --color-gold-400: #deb851;
+  --color-gold-500: #c59d38;
+  --color-gold-600: #9f7b24;
+}
+
+/* Intro lirios: grow close to screen then fade out */
+@keyframes lily-grow-fade {
+  0% {
+    opacity: 1;
+    transform: scale(0.2);
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.lily-frame {
+  opacity: 0;
+  animation-name: lily-grow-fade;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+/* Lirios decorativos flotando por toda la página */
+@keyframes lily-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(3deg);
+  }
+}

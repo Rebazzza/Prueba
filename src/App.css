@@ -1,0 +1,56 @@
+/* Elegant editorial fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@200;300;400;500&display=swap');
+
+.font-handwriting {
+  font-family: 'Great Vibes', cursive;
+}
+
+/* Scrollbar styling for elegant dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #641320;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #851c2d;
+}
+
+/* Wine-gold glow accents */
+.ivory-card {
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(222, 184, 81, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(133, 28, 45, 0.12) 0%, transparent 50%);
+}
+
+/* Portrait frame shadow */
+.polaroid-shadow {
+  box-shadow:
+    0 20px 50px -18px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(222, 184, 81, 0.15);
+}
+
+/* Tape on top of notes */
+.postit {
+  position: relative;
+}
+
+.postit::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 40px;
+  height: 16px;
+  background: rgba(222, 184, 81, 0.45);
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
