@@ -21,6 +21,13 @@ export interface LoveNote {
   message: string;
 }
 
+export interface SilentPromise {
+  id: string;
+  author: string;
+  promise_text: string;
+  created_at: string;
+}
+
 export type View =
   | "home"
   | "messages"

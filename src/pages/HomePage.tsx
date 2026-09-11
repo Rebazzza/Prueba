@@ -12,6 +12,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import OhanaCover from "../components/OhanaCover";
+import LoveReasons from "../components/LoveReasons";
+import SilentPromises from "../components/SilentPromises";
 import { supabase } from "../lib/supabaseClient";
 import { getErrorText } from "../lib/getErrorText";
 import { getDisplayName } from "../auth/ProfileContext";
@@ -362,6 +364,9 @@ export default function HomePage({
           </div>
         </div>
       </section>
+
+      <LoveReasons />
+      <SilentPromises />
     </div>
   );
 }
