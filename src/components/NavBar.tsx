@@ -18,7 +18,10 @@ interface NavBarProps {
 
 export default function NavBar({ view, onNavigate }: NavBarProps) {
   return (
-    <nav className="fixed bottom-3 left-1/2 z-50 w-[calc(100%-1.25rem)] max-w-md -translate-x-1/2">
+    <nav
+      className="fixed bottom-3 left-1/2 z-50 w-[calc(100%-1.25rem)] max-w-md -translate-x-1/2"
+      style={{ bottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+    >
       <div className="flex items-stretch justify-between rounded-[1.6rem] border border-gold-400/20 bg-wine-950/90 px-1 py-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.8)] backdrop-blur-xl">
         {NAV_ITEMS.map((item) => {
           const active = view === item.id;

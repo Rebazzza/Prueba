@@ -296,7 +296,7 @@ export default function HomePage({
           <div className="mb-4 flex items-center justify-between">
             <div>
               <span className="font-cinzel text-[10px] tracking-[0.3em] text-gold-400 uppercase">
-                Archive Privée • En Vivo
+                Nuestro Tesoro • En Vivo
               </span>
               <h2 className="font-serif mt-1 text-2xl text-stone-100">
                 Lo último
