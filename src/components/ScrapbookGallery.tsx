@@ -3,9 +3,12 @@ import type { ChangeEvent } from "react";
 import { ImagePlus, Loader2, Save, X } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { getErrorText } from "../lib/getErrorText";
+import { uploadImage } from "../lib/supabase";
+import { useProfile } from "../auth/ProfileContext";
 import MemoriesGrid from "./MemoriesGrid";
 
 export default function ScrapbookGallery() {
+  const { profile } = useProfile();
   const [uploading, setUploading] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [pickedFile, setPickedFile] = useState<File | null>(null);
@@ -43,22 +46,12 @@ export default function ScrapbookGallery() {
     setSyncError(null);
 
     try {
-      const ext = pickedFile.name.split(".").pop() || "jpg";
-      const fileName = `memory_${Date.now()}_${Math.random()
-        .toString(36)
-        .slice(2, 8)}.${ext}`;
-
-      const { error: storageErr } = await supabase.storage
-        .from("ohana_images")
-        .upload(fileName, pickedFile, {
-          contentType: pickedFile.type || "image/jpeg",
-        });
-
-      if (storageErr) throw storageErr;
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("ohana_images").getPublicUrl(fileName);
+      const { url } = await uploadImage({
+        file: pickedFile,
+        author: profile ?? "Diario",
+        section: "gallery",
+        caption: newDesc.trim() || undefined,
+      });
 
       const today = new Date().toISOString().slice(0, 10);
 
@@ -66,7 +59,7 @@ export default function ScrapbookGallery() {
         date: today,
         title: "",
         description: newDesc.trim() || null,
-        image_url: publicUrl,
+        image_url: url,
       });
 
       if (dbErr) throw dbErr;

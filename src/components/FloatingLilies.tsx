@@ -1,6 +1,9 @@
+import { bucketUrl } from "../lib/supabase";
+
 const LILIES = [
   {
-    src: "/Lirio3.png",
+    src: bucketUrl("Lirio3.png"),
+    local: "/Lirio3.png",
     left: "2%",
     top: "7%",
     size: 84,
@@ -10,7 +13,8 @@ const LILIES = [
     duration: "9s",
   },
   {
-    src: "/Lirio5.png",
+    src: bucketUrl("Lirio5.png"),
+    local: "/Lirio5.png",
     right: "4%",
     top: "13%",
     size: 100,
@@ -20,7 +24,8 @@ const LILIES = [
     duration: "11s",
   },
   {
-    src: "/Lirio1.png",
+    src: bucketUrl("Lirio1.png"),
+    local: "/Lirio1.png",
     left: "6%",
     top: "40%",
     size: 70,
@@ -30,7 +35,8 @@ const LILIES = [
     duration: "10s",
   },
   {
-    src: "/Lirio6.png",
+    src: bucketUrl("Lirio6.png"),
+    local: "/Lirio6.png",
     right: "3%",
     top: "46%",
     size: 92,
@@ -40,7 +46,8 @@ const LILIES = [
     duration: "12s",
   },
   {
-    src: "/Lirio2.png",
+    src: bucketUrl("Lirio2.png"),
+    local: "/Lirio2.png",
     left: "9%",
     bottom: "9%",
     size: 80,
@@ -50,7 +57,8 @@ const LILIES = [
     duration: "9.5s",
   },
   {
-    src: "/Lirio4.png",
+    src: bucketUrl("Lirio4.png"),
+    local: "/Lirio4.png",
     right: "8%",
     bottom: "6%",
     size: 108,
@@ -87,6 +95,10 @@ export default function FloatingLilies() {
             src={lily.src}
             alt=""
             draggable={false}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = lily.local;
+            }}
             className="h-full w-full object-contain"
             style={{
               animation: `lily-float ${lily.duration} ease-in-out ${lily.delay} infinite`,

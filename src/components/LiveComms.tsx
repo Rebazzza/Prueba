@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { getErrorText } from "../lib/getErrorText";
+import { uploadImage } from "../lib/supabase";
 import type { Message } from "../types";
 import { useProfile, getDisplayName } from "../auth/ProfileContext";
 
@@ -66,27 +67,18 @@ export default function LiveComms() {
     if (!pickedFile) return;
     setUploading(true);
     try {
-      const ext = pickedFile.name.split(".").pop() || "jpg";
-      const fileName = `chat_${Date.now()}_${Math.random()
-        .toString(36)
-        .slice(2, 8)}.${ext}`;
-
-      const { error: storageErr } = await supabase.storage
-        .from("ohana_images")
-        .upload(fileName, pickedFile, {
-          contentType: pickedFile.type || "image/jpeg",
-        });
-      if (storageErr) throw storageErr;
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("ohana_images").getPublicUrl(fileName);
+      const { url } = await uploadImage({
+        file: pickedFile,
+        author: myId,
+        section: "chat",
+        caption: newMsg.trim() || "Foto del chat",
+      });
 
       const msg: Omit<Message, "id"> = {
         created_at: new Date().toISOString(),
         author: myId,
         content: newMsg.trim(),
-        image_url: publicUrl,
+        image_url: url,
       };
 
       const { error } = await supabase.from("messages").insert(msg);

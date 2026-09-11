@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { bucketUrl } from "../lib/supabase";
 
-const LILIES = Array.from({ length: 7 }, (_, i) => `/Lirio${i + 1}.png`);
+const LILIES = Array.from({ length: 7 }, (_, i) => bucketUrl(`Lirio${i + 1}.png`));
 
 const LILY_STAGGER_MS = 250;
 const LILY_DURATION_MS = 700;
@@ -19,8 +20,12 @@ export default function LoveIntro({ onFinish }: { onFinish: () => void }) {
           Un mes más mi vida
         </p>
         <img
-          src="/Carta.png"
+          src={bucketUrl("Carta.png")}
           alt="Carta para ti"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/Carta.png";
+          }}
           className="w-72 animate-pulse sm:w-80"
         />
         <p className="font-cinzel mt-12 text-xs tracking-[0.25em] text-gold-300/80 uppercase">
@@ -37,6 +42,10 @@ export default function LoveIntro({ onFinish }: { onFinish: () => void }) {
           key={src}
           src={src}
           alt="Lirio"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = `/Lirio${i + 1}.png`;
+          }}
           className="lily-frame absolute inset-0 m-auto h-72 w-72 object-contain sm:h-80 sm:w-80"
           style={{
             animationDelay: `${i * LILY_STAGGER_MS}ms`,

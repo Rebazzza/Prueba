@@ -1,6 +1,7 @@
 import { Images } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import ScrapbookGallery from "../components/ScrapbookGallery";
+import AppImagesBoard from "../components/AppImagesBoard";
 
 export default function GalleryPage({ onBack }: { onBack: () => void }) {
   return (
@@ -14,6 +15,7 @@ export default function GalleryPage({ onBack }: { onBack: () => void }) {
         iconClass="text-gold-300"
       />
       <ScrapbookGallery />
+      <AppImagesBoard />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import type {
   WheelEvent as ReactWheelEvent,
 } from "react";
 import { Heart, X, ZoomIn, ZoomOut } from "lucide-react";
+import { bucketUrl } from "../lib/supabase";
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
@@ -149,8 +150,12 @@ export default function OhanaCover() {
           className="group mx-auto mb-4 block w-full cursor-pointer transition-transform duration-300 hover:scale-[1.02] active:scale-95"
         >
           <img
-            src="/CartaAbierta.png"
+            src={bucketUrl("CartaAbierta.png")}
             alt="Carta abierta"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/CartaAbierta.png";
+            }}
             className="w-full"
           />
         </button>
@@ -185,9 +190,13 @@ export default function OhanaCover() {
           >
             <img
               ref={imgRef}
-              src="/Letra.png"
+              src={bucketUrl("Letra.png")}
               alt="Letra"
               draggable={false}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/Letra.png";
+              }}
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
               onPointerUp={onPointerEnd}
