@@ -243,7 +243,7 @@ export default function LiveComms() {
           </div>
         )}
 
-        <div className="mb-4 max-h-[75vh] space-y-3 overflow-y-auto rounded-2xl border border-gold-400/15 bg-wine-950/60 p-4 shadow-inner backdrop-blur-sm">
+        <div className="mb-4 max-h-[62vh] space-y-3 overflow-y-auto rounded-2xl border border-gold-400/15 bg-wine-950/60 p-4 shadow-inner backdrop-blur-sm">
           {loaded && messages.length === 0 && (
             <div className="py-6 text-center">
               <p className="font-cormorant text-sm text-stone-500 italic">
