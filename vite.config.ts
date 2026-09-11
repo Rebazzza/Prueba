@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['icon.png', 'favicon.svg', 'icons.svg'],
+      includeAssets: ['IconOriginal.ico', 'IconOriginal.jpg', 'icon.png', 'favicon.svg', 'icons.svg'],
       manifest: {
         name: 'Nuestro Diario',
         short_name: 'Diario',
@@ -25,20 +25,12 @@ export default defineConfig({
         background_color: '#09090b',
         categories: ['lifestyle', 'social'],
         icons: [
+          { src: 'IconOriginal.jpg', sizes: '192x192', type: 'image/jpeg' },
+          { src: 'IconOriginal.jpg', sizes: '512x512', type: 'image/jpeg' },
           { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512.png', sizes: '512x512', type: 'image/png' },
-          {
-            src: 'pwa-maskable-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'maskable',
-          },
-          {
-            src: 'pwa-maskable-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable',
-          },
+          { src: 'pwa-maskable-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: 'pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
