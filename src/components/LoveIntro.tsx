@@ -15,16 +15,16 @@ export default function LoveIntro({ onFinish }: { onFinish: () => void }) {
         onClick={() => setOpened(true)}
         className="fixed inset-0 z-[60] flex h-full w-full cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-noir via-wine-950 to-noir px-6"
       >
-        <p className="font-script mb-12 text-center text-5xl leading-tight font-bold text-gold-200 drop-shadow-[0_4px_20px_rgba(246,228,168,0.25)] sm:text-6xl">
+        <p className="font-script mb-12 text-center text-6xl leading-tight font-bold text-gold-200 drop-shadow-[0_4px_20px_rgba(246,228,168,0.25)] sm:text-7xl">
           Un mes más mi vida
         </p>
         <img
           src="/Carta.png"
           alt="Carta para ti"
-          className="w-56 animate-pulse sm:w-64"
+          className="w-72 animate-pulse sm:w-80"
         />
-        <p className="font-cinzel mt-12 text-[11px] tracking-[0.25em] text-gold-300/80 uppercase">
-          Tocá la carta para abrir 🎁
+        <p className="font-cinzel mt-12 text-xs tracking-[0.25em] text-gold-300/80 uppercase">
+          Tocá la carta para abrir 
         </p>
       </button>
     );
@@ -45,7 +45,7 @@ export default function LoveIntro({ onFinish }: { onFinish: () => void }) {
           onAnimationEnd={i === LILIES.length - 1 ? onFinish : undefined}
         />
       ))}
-      <p className="font-script absolute bottom-10 text-2xl text-gold-300 drop-shadow-sm">
+      <p className="font-script absolute bottom-10 text-4xl text-gold-300 drop-shadow-sm">
         Un mes más mi vida 
       </p>
     </div>

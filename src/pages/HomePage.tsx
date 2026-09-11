@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   ChevronRight,
+  Feather,
   Heart,
   ImageOff,
   Images,
@@ -8,12 +9,12 @@ import {
   Loader2,
   Mail,
   MessageCircle,
+  Moon,
   Music2,
+  ShoppingBag,
   Sparkles,
 } from "lucide-react";
 import OhanaCover from "../components/OhanaCover";
-import LoveReasons from "../components/LoveReasons";
-import SilentPromises from "../components/SilentPromises";
 import { supabase } from "../lib/supabaseClient";
 import { getErrorText } from "../lib/getErrorText";
 import { getDisplayName } from "../auth/ProfileContext";
@@ -64,6 +65,38 @@ const QUICK_ACTIONS = [
     label: "Música",
     caption: "Nuestro playlist",
     icon: Music2,
+    tile: "from-wine-900 to-wine-950",
+    iconColor: "text-gold-300",
+  },
+  {
+    id: "reasons" as const,
+    label: "Razones",
+    caption: "Porque te amo",
+    icon: Heart,
+    tile: "from-wine-900 to-wine-950",
+    iconColor: "text-gold-300",
+  },
+  {
+    id: "promises" as const,
+    label: "Promesas",
+    caption: "El rincón silencioso",
+    icon: Feather,
+    tile: "from-wine-900 to-wine-950",
+    iconColor: "text-gold-300",
+  },
+  {
+    id: "dreams" as const,
+    label: "Sueños",
+    caption: "Nuestro diario de sueños",
+    icon: Moon,
+    tile: "from-wine-900 to-wine-950",
+    iconColor: "text-gold-300",
+  },
+  {
+    id: "wishlist" as const,
+    label: "Cosas",
+    caption: "Lo que necesitás",
+    icon: ShoppingBag,
     tile: "from-wine-900 to-wine-950",
     iconColor: "text-gold-300",
   },
@@ -364,9 +397,6 @@ export default function HomePage({
           </div>
         </div>
       </section>
-
-      <LoveReasons />
-      <SilentPromises />
     </div>
   );
 }

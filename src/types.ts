@@ -28,10 +28,30 @@ export interface SilentPromise {
   created_at: string;
 }
 
+export interface Dream {
+  id: string;
+  author: string;
+  dream_text: string;
+  is_achieved: boolean;
+  created_at: string;
+}
+
+export interface WishlistItem {
+  id: string;
+  item_name: string;
+  category: string;
+  is_acquired: boolean;
+  created_at: string;
+}
+
 export type View =
   | "home"
   | "messages"
   | "notes"
   | "gallery"
   | "music"
-  | "bucket";
+  | "bucket"
+  | "reasons"
+  | "promises"
+  | "dreams"
+  | "wishlist";

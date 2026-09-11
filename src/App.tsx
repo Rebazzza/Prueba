@@ -6,6 +6,10 @@ import NotesPage from "./pages/NotesPage";
 import GalleryPage from "./pages/GalleryPage";
 import PlaylistPage from "./pages/PlaylistPage";
 import BucketListPage from "./pages/BucketListPage";
+import ReasonsPage from "./pages/ReasonsPage";
+import PromisesPage from "./pages/PromisesPage";
+import DreamsPage from "./pages/DreamsPage";
+import WishlistPage from "./pages/WishlistPage";
 import LoveIntro from "./components/LoveIntro";
 import FloatingLilies from "./components/FloatingLilies";
 import type { View } from "./types";
@@ -31,6 +35,10 @@ function MainApp() {
       {view === "gallery" && <GalleryPage onBack={goHome} />}
       {view === "music" && <PlaylistPage onBack={goHome} />}
       {view === "bucket" && <BucketListPage onBack={goHome} />}
+      {view === "reasons" && <ReasonsPage />}
+      {view === "promises" && <PromisesPage />}
+      {view === "dreams" && <DreamsPage />}
+      {view === "wishlist" && <WishlistPage />}
       <NavBar view={view} onNavigate={navigate} />
       <FloatingLilies />
     </div>
