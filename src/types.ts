@@ -44,6 +44,15 @@ export interface WishlistItem {
   created_at: string;
 }
 
+export interface PlaylistSong {
+  id: string;
+  title: string;
+  artist: string;
+  audio_url: string;
+  cover_url: string | null;
+  created_at: string;
+}
+
 export type View =
   | "home"
   | "messages"

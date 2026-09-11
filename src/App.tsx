@@ -12,6 +12,7 @@ import DreamsPage from "./pages/DreamsPage";
 import WishlistPage from "./pages/WishlistPage";
 import LoveIntro from "./components/LoveIntro";
 import FloatingLilies from "./components/FloatingLilies";
+import FloatingPlayer from "./components/FloatingPlayer";
 import type { View } from "./types";
 import "./App.css";
 
@@ -41,6 +42,7 @@ function MainApp() {
       {view === "wishlist" && <WishlistPage />}
       <NavBar view={view} onNavigate={navigate} />
       <FloatingLilies />
+      <FloatingPlayer hidden={view === "music"} />
     </div>
   );
 }

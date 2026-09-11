@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { bucketUrl } from "../lib/supabase";
+import { useMusic } from "../music/MusicContext";
 
 const LILIES = Array.from({ length: 7 }, (_, i) => bucketUrl(`Lirio${i + 1}.png`));
 
@@ -8,12 +9,16 @@ const LILY_DURATION_MS = 700;
 
 export default function LoveIntro({ onFinish }: { onFinish: () => void }) {
   const [opened, setOpened] = useState(false);
+  const { playByTitle } = useMusic();
 
   if (!opened) {
     return (
       <button
         type="button"
-        onClick={() => setOpened(true)}
+        onClick={() => {
+          playByTitle("Superpowers");
+          setOpened(true);
+        }}
         className="fixed inset-0 z-[60] flex h-full w-full cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-noir via-wine-950 to-noir px-6"
       >
         <p className="font-script mb-12 text-center text-6xl leading-tight font-bold text-gold-200 drop-shadow-[0_4px_20px_rgba(246,228,168,0.25)] sm:text-7xl">
