@@ -2,19 +2,20 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
 
 /**
- * Edge Function opcional para ENVIAR notificaciones push.
+ * Edge Function para ENVIAR notificaciones push.
+ *
+ * Acepta dos formatos de entrada:
+ *
+ * 1) Webhook de base de datos (lo que envían los triggers de Postgres):
+ *    { "type": "INSERT", "table": "messages", "record": { author, content, ... } }
+ *
+ * 2) Petición directa:
+ *    { "title", "body", "url", "author"? }
  *
  * Deploy:
  *   supabase functions deploy send-push --no-verify-jwt
- *
  * Secretos:
  *   supabase secrets set --env-file supabase/.env.push.local
- *
- * Uso:
- *   curl -X POST https://<proyecto>.supabase.co/functions/v1/send-push \
- *     -H "Content-Type: application/json" \
- *     -H "x-push-secret: <PUSH_SEND_SECRET>" \
- *     -d '{"title":"Mira esto 💛","body":"Te dejé una nota nueva","url":"/"}'
  */
 
 const corsHeaders = {
@@ -24,15 +25,33 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-interface PushPayload {
+const PROFILE_NAMES: Record<string, string> = { M: "Mauricio", R: "Rubí" };
+
+interface NotificationPayload {
   title?: string;
   body?: string;
   url?: string;
   icon?: string;
   image?: string;
   tag?: string;
-  /** Filtra por autor ("M" o "R"). Sin valor, envía a todos. */
+  /** Envío directo: limita a las suscripciones de este autor. */
   author?: string | null;
+}
+
+interface WebhookPayload {
+  type?: string;
+  table?: string;
+  schema?: string;
+  record?: Record<string, unknown> | null;
+}
+
+interface PushMessage {
+  title: string;
+  body: string;
+  url: string;
+  icon?: string;
+  image?: string;
+  tag?: string;
 }
 
 function json(body: unknown, status = 200) {
@@ -40,6 +59,49 @@ function json(body: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+function truncate(text: string, max = 180): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  return clean.length > max ? `${clean.slice(0, max - 1)}…` : clean;
+}
+
+function displayName(author: unknown): string {
+  const id = String(author ?? "").trim();
+  return PROFILE_NAMES[id] ?? (id || "Tu amor");
+}
+
+/** Construye la notificación a partir de una fila insertada. */
+function buildFromRecord(
+  table: string,
+  record: Record<string, unknown>
+): PushMessage | null {
+  const who = displayName(record.author);
+
+  if (table === "messages") {
+    const content = String(record.content ?? "").trim();
+    const hasImage = Boolean(record.image_url);
+    const body =
+      content || (hasImage ? "📷 Te envió una foto" : "Te escribió algo");
+    return {
+      title: `${who} te escribió 💬`,
+      body: truncate(body),
+      url: "/",
+      tag: "ohana-message",
+    };
+  }
+
+  if (table === "love_notes") {
+    const message = String(record.message ?? "").trim();
+    return {
+      title: `${who} te dejó una nota 💌`,
+      body: truncate(message || "Abrí el buzón para leerla"),
+      url: "/",
+      tag: "ohana-note",
+    };
+  }
+
+  return null;
 }
 
 Deno.serve(async (req) => {
@@ -58,22 +120,38 @@ Deno.serve(async (req) => {
   const publicKey = Deno.env.get("VAPID_PUBLIC_KEY");
   const privateKey = Deno.env.get("VAPID_PRIVATE_KEY");
   const subject = Deno.env.get("VAPID_SUBJECT") ?? "mailto:hola@example.com";
-
   if (!publicKey || !privateKey) {
     return json({ error: "Faltan VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY" }, 500);
   }
 
   webpush.setVapidDetails(subject, publicKey, privateKey);
 
-  const payload = (await req.json().catch(() => ({}))) as PushPayload;
-  const notification = {
-    title: payload.title ?? "Nuestro Diario",
-    body: payload.body ?? "Hay algo nuevo esperándote 💛",
-    url: payload.url ?? "/",
-    icon: payload.icon ?? "/pwa-192.png",
-    image: payload.image,
-    tag: payload.tag,
-  };
+  const input = (await req.json().catch(() => ({}))) as NotificationPayload &
+    WebhookPayload;
+
+  let notification: PushMessage;
+  let excludeAuthor: string | null = null;
+
+  if (input.record && input.table) {
+    // Viene de un trigger de base de datos.
+    const built = buildFromRecord(input.table, input.record);
+    if (!built) {
+      return json({ ok: true, skipped: `tabla no soportada: ${input.table}` });
+    }
+    notification = built;
+    const author = String(input.record.author ?? "").trim();
+    excludeAuthor = author || null;
+  } else {
+    // Petición directa.
+    notification = {
+      title: input.title ?? "Nuestro Diario",
+      body: input.body ?? "Hay algo nuevo esperándote 💛",
+      url: input.url ?? "/",
+      icon: input.icon,
+      image: input.image,
+      tag: input.tag,
+    };
+  }
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -81,7 +159,13 @@ Deno.serve(async (req) => {
   );
 
   let query = supabase.from("push_subscriptions").select("*");
-  if (payload.author) query = query.eq("author", payload.author);
+
+  if (excludeAuthor && /^[A-Za-z0-9_-]+$/.test(excludeAuthor)) {
+    // No notificar a quien escribió.
+    query = query.or(`author.is.null,author.neq.${excludeAuthor}`);
+  } else if (input.author) {
+    query = query.eq("author", input.author);
+  }
 
   const { data, error } = await query;
   if (error) return json({ error: error.message }, 500);
