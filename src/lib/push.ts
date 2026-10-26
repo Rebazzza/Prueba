@@ -46,7 +46,22 @@ export interface PushSnapshot {
 }
 
 export function isVapidConfigured(): boolean {
-  return VAPID_PUBLIC_KEY.length > 0;
+  return isValidVapidPublicKey(VAPID_PUBLIC_KEY);
+}
+
+/**
+ * La clave pública VAPID debe ser un punto EC sin comprimir: 65 bytes que
+ * empiezan por 0x04. Si no, `PushManager.subscribe()` lanza
+ * "The provided applicationServerKey is not valid".
+ */
+function isValidVapidPublicKey(key: string): boolean {
+  if (!key) return false;
+  try {
+    const bytes = urlBase64ToUint8Array(key);
+    return bytes.length === 65 && bytes[0] === 0x04;
+  } catch {
+    return false;
+  }
 }
 
 function isIosDevice(): boolean {
