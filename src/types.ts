@@ -63,4 +63,5 @@ export type View =
   | "reasons"
   | "promises"
   | "dreams"
-  | "wishlist";
+  | "wishlist"
+  | "settings";

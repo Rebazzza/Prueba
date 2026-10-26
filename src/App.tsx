@@ -10,6 +10,7 @@ import ReasonsPage from "./pages/ReasonsPage";
 import PromisesPage from "./pages/PromisesPage";
 import DreamsPage from "./pages/DreamsPage";
 import WishlistPage from "./pages/WishlistPage";
+import SettingsPage from "./pages/SettingsPage";
 import LoveIntro from "./components/LoveIntro";
 import FloatingLilies from "./components/FloatingLilies";
 import FloatingPlayer from "./components/FloatingPlayer";
@@ -40,6 +41,7 @@ function MainApp() {
       {view === "promises" && <PromisesPage />}
       {view === "dreams" && <DreamsPage />}
       {view === "wishlist" && <WishlistPage />}
+      {view === "settings" && <SettingsPage onBack={goHome} />}
       <NavBar view={view} onNavigate={navigate} />
       <FloatingLilies />
       <FloatingPlayer hidden={view === "music"} />

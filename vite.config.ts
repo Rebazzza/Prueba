@@ -33,10 +33,13 @@ export default defineConfig({
           { src: 'pwa-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
-      workbox: {
+      // `injectManifest` nos deja un único Service Worker en src/sw.ts que
+      // VitePWA compila a /sw.js, con precache de Workbox + manejo de push.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        cleanupOutdatedCaches: true,
-        navigateFallback: '/index.html',
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
       },
     }),

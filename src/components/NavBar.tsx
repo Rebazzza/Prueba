@@ -6,6 +6,7 @@ import {
   Mail,
   MessageCircle,
   Moon,
+  Settings,
   ShoppingBag,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -20,6 +21,7 @@ const NAV_ITEMS: { id: View; label: string; icon: LucideIcon }[] = [
   { id: "promises", label: "Promesas", icon: Feather },
   { id: "dreams", label: "Sueños", icon: Moon },
   { id: "wishlist", label: "Cosas", icon: ShoppingBag },
+  { id: "settings", label: "Ajustes", icon: Settings },
 ];
 
 interface NavBarProps {

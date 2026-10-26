@@ -14,14 +14,6 @@ import type { Memory } from "../types";
 
 const ROTATIONS = ["-rotate-1", "rotate-1", "-rotate-2", "rotate-2", "-rotate-1"];
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr + "T00:00:00").toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
 function SkeletonCard() {
   return (
     <div className="rounded-sm border border-gold-400/15 bg-wine-950/60 p-3 shadow-xl">
@@ -264,7 +256,7 @@ export default function MemoriesGrid({ heading, refreshKey = 0 }: MemoriesGridPr
                   ) : (
                     <>
                       <span className="font-cinzel block text-[9px] tracking-[0.2em] text-gold-400 uppercase">
-                        {formatDate(memory.date)}
+                        {memory.title}
                       </span>
                       {memory.description && (
                         <p className="font-cormorant mt-1 text-lg leading-snug text-ivory-100 italic">
@@ -339,7 +331,7 @@ export default function MemoriesGrid({ heading, refreshKey = 0 }: MemoriesGridPr
                   </p>
                 )}
                 <p className="font-cinzel text-[10px] tracking-wider text-gold-400 uppercase">
-                  {formatDate(memories[lightboxIndex].date)} ·{" "}
+                  {memories[lightboxIndex].title} ·{" "}
                   {lightboxIndex + 1}/{memories.length}
                 </p>
               </figcaption>
