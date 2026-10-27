@@ -104,7 +104,7 @@ function buildFromRecord(
   return null;
 }
 
-Deno.serve(async (req) => {
+async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -113,18 +113,33 @@ Deno.serve(async (req) => {
   }
 
   const secret = Deno.env.get("PUSH_SEND_SECRET");
-  if (secret && req.headers.get("x-push-secret") !== secret) {
+  const receivedSecret = req.headers.get("x-push-secret");
+  if (secret && receivedSecret !== secret) {
+    console.error("[send-push] 401: secreto inválido o ausente");
     return json({ error: "No autorizado" }, 401);
+  }
+  if (!secret) {
+    console.warn(
+      "[send-push] PUSH_SEND_SECRET no está configurado: la función acepta cualquier llamada."
+    );
   }
 
   const publicKey = Deno.env.get("VAPID_PUBLIC_KEY");
   const privateKey = Deno.env.get("VAPID_PRIVATE_KEY");
   const subject = Deno.env.get("VAPID_SUBJECT") ?? "mailto:hola@example.com";
   if (!publicKey || !privateKey) {
+    console.error(
+      "[send-push] 500: faltan VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY en los secretos"
+    );
     return json({ error: "Faltan VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY" }, 500);
   }
 
-  webpush.setVapidDetails(subject, publicKey, privateKey);
+  try {
+    webpush.setVapidDetails(subject, publicKey, privateKey);
+  } catch (err) {
+    console.error("[send-push] 500: claves VAPID inválidas:", err);
+    return json({ error: `Claves VAPID inválidas: ${String(err)}` }, 500);
+  }
 
   const input = (await req.json().catch(() => ({}))) as NotificationPayload &
     WebhookPayload;
@@ -133,16 +148,18 @@ Deno.serve(async (req) => {
   let excludeAuthor: string | null = null;
 
   if (input.record && input.table) {
-    // Viene de un trigger de base de datos.
     const built = buildFromRecord(input.table, input.record);
     if (!built) {
+      console.log(`[send-push] tabla no soportada: ${input.table}`);
       return json({ ok: true, skipped: `tabla no soportada: ${input.table}` });
     }
     notification = built;
     const author = String(input.record.author ?? "").trim();
     excludeAuthor = author || null;
+    console.log(
+      `[send-push] webhook ${input.table} de "${excludeAuthor ?? "?"}"`
+    );
   } else {
-    // Petición directa.
     notification = {
       title: input.title ?? "Nuestro Diario",
       body: input.body ?? "Hay algo nuevo esperándote 💛",
@@ -151,6 +168,7 @@ Deno.serve(async (req) => {
       image: input.image,
       tag: input.tag,
     };
+    console.log("[send-push] petición directa");
   }
 
   const supabase = createClient(
@@ -161,18 +179,23 @@ Deno.serve(async (req) => {
   let query = supabase.from("push_subscriptions").select("*");
 
   if (excludeAuthor && /^[A-Za-z0-9_-]+$/.test(excludeAuthor)) {
-    // No notificar a quien escribió.
     query = query.or(`author.is.null,author.neq.${excludeAuthor}`);
   } else if (input.author) {
     query = query.eq("author", input.author);
   }
 
   const { data, error } = await query;
-  if (error) return json({ error: error.message }, 500);
+  if (error) {
+    console.error("[send-push] error consultando suscripciones:", error.message);
+    return json({ error: error.message }, 500);
+  }
 
   const rows = data ?? [];
+  console.log(`[send-push] suscripciones objetivo: ${rows.length}`);
+
   let sent = 0;
   let removed = 0;
+  const failures: Array<{ statusCode?: number; message: string }> = [];
 
   await Promise.allSettled(
     rows.map(async (row) => {
@@ -187,6 +210,11 @@ Deno.serve(async (req) => {
         sent += 1;
       } catch (err) {
         const statusCode = (err as { statusCode?: number }).statusCode;
+        const message =
+          (err as { body?: string }).body ??
+          (err instanceof Error ? err.message : String(err));
+        failures.push({ statusCode, message: truncate(message, 300) });
+
         // Suscripciones vencidas: se eliminan para no reintentar.
         if (statusCode === 404 || statusCode === 410) {
           await supabase
@@ -199,5 +227,23 @@ Deno.serve(async (req) => {
     })
   );
 
-  return json({ ok: true, subscribers: rows.length, sent, removed });
+  if (failures.length > 0) {
+    console.error("[send-push] fallos:", JSON.stringify(failures));
+  }
+
+  const summary = { ok: true, subscribers: rows.length, sent, removed };
+  console.log("[send-push] resultado:", JSON.stringify(summary));
+  return json(summary);
+}
+
+Deno.serve(async (req) => {
+  try {
+    return await handle(req);
+  } catch (err) {
+    console.error("[send-push] error inesperado:", err);
+    return json(
+      { error: err instanceof Error ? err.message : String(err) },
+      500
+    );
+  }
 });

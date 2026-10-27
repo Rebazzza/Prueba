@@ -87,6 +87,8 @@ de `send-push` con header `x-push-secret`. El formato del payload es idéntico.
 - **iPhone/iPad**: las push solo funcionan con la PWA instalada (Compartir →
   Añadir a pantalla de inicio). El componente lo avisa.
 - **HTTPS**: obligatorio salvo en `localhost`.
+- El `author` de la suscripción se actualiza solo al cambiar de perfil en
+  cualquier pantalla (Ajustes, Buzón, Chat), para no notificar a quien escribe.
 - Si cambiás las claves VAPID, las suscripciones se renuevan al volver a
   activar el interruptor.
 - Las suscripciones vencidas (404/410) se borran solas en cada envío.

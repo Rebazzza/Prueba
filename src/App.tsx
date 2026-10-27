@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
 import MessagesPage from "./pages/MessagesPage";
@@ -14,11 +14,23 @@ import SettingsPage from "./pages/SettingsPage";
 import LoveIntro from "./components/LoveIntro";
 import FloatingLilies from "./components/FloatingLilies";
 import FloatingPlayer from "./components/FloatingPlayer";
+import { useProfile } from "./auth/ProfileContext";
+import { syncPushSubscription } from "./lib/push";
 import type { View } from "./types";
 import "./App.css";
 
 function MainApp() {
+  const { profile } = useProfile();
   const [view, setView] = useState<View>("home");
+
+  // Mantiene el autor de la suscripción push alineado con el perfil activo,
+  // sin importar desde qué pantalla se cambie (Ajustes, Buzón, Chat...).
+  useEffect(() => {
+    if (!profile) return;
+    syncPushSubscription(profile).catch((err) =>
+      console.warn("No se pudo actualizar el autor de la suscripción push:", err)
+    );
+  }, [profile]);
 
   function navigate(next: View) {
     setView(next);

@@ -348,8 +348,9 @@ export async function disablePush(): Promise<void> {
   }
 }
 
-/** Vuelve a guardar la suscripción existente (mantiene fresco el endpoint). */
+/** Vuelve a guardar la suscripción existente (mantiene fresco el endpoint y el autor). */
 export async function syncPushSubscription(author: string | null): Promise<void> {
+  if (!("serviceWorker" in navigator)) return;
   const registration = await navigator.serviceWorker.getRegistration();
   const subscription = registration
     ? await registration.pushManager.getSubscription()
